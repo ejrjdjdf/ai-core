@@ -1,170 +1,155 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>U-A-CORE 2.0 | SDU-AI SYSTEM</title>
-    <style>
-        /* Стиль справжнього хакерського терміналу */
-        body { 
-            font-family: 'Courier New', Courier, monospace; 
-            background: #050505; 
-            color: #00ff41; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
-        }
+<style>
+    :root {
+        --bg: #0b0e14;
+        --panel: #161b22;
+        --accent: #58a6ff; /* Серйозний синій, як у GitHub/Microsoft */
+        --text: #c9d1d9;
+        --user-msg: #21262d;
+    }
 
-        #chat-container { 
-            width: 95%; 
-            max-width: 850px; 
-            background: rgba(10, 10, 10, 0.95); 
-            border: 2px solid #00ff41; 
-            border-radius: 8px; 
-            padding: 20px; 
-            box-shadow: 0 0 25px rgba(0, 255, 65, 0.2); 
-            display: flex;
-            flex-direction: column;
-        }
+    body { 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+        background: var(--bg); 
+        color: var(--text); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        height: 100vh; 
+        margin: 0; 
+    }
 
-        h2 { 
-            text-align: center; 
-            letter-spacing: 3px; 
-            text-transform: uppercase;
-            border-bottom: 1px solid #00ff41;
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
+    #chat-container { 
+        width: 90%; 
+        max-width: 1000px; 
+        height: 85vh;
+        background: var(--panel); 
+        border: 1px solid #30363d;
+        border-radius: 12px; 
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        overflow: hidden;
+    }
 
-        #chat-box { 
-            height: 450px; 
-            overflow-y: auto; 
-            margin-bottom: 20px; 
-            padding: 10px; 
-            background: #000;
-            border: 1px solid #111;
-        }
+    h2 { 
+        font-size: 14px;
+        font-weight: 600;
+        padding: 15px 20px;
+        margin: 0;
+        background: rgba(255,255,255,0.03);
+        border-bottom: 1px solid #30363d;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-        .message { 
-            margin-bottom: 12px; 
-            padding: 8px; 
-            border-radius: 4px;
-            word-wrap: break-word;
-        }
+    h2::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #238636; /* Зелений індикатор статусу */
+        border-radius: 50%;
+        display: inline-block;
+    }
 
-        .user-label { color: #008cff; font-weight: bold; }
-        .ai-label { color: #00ff41; font-weight: bold; text-shadow: 0 0 8px #00ff41; }
+    #chat-box { 
+        flex: 1;
+        overflow-y: auto; 
+        padding: 25px; 
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
 
-        #input-area { 
-            display: flex; 
-            gap: 12px; 
-        }
+    .message { 
+        max-width: 80%;
+        padding: 12px 16px; 
+        border-radius: 10px;
+        line-height: 1.5;
+        font-size: 15px;
+        position: relative;
+    }
 
-        input { 
-            flex: 1; 
-            padding: 14px; 
-            background: #000; 
-            border: 1px dashed #00ff41; 
-            color: #00ff41; 
-            font-size: 16px;
-            outline: none; 
-        }
+    .user-msg { 
+        align-self: flex-end; 
+        background: var(--accent); 
+        color: #fff;
+    }
 
-        button { 
-            padding: 14px 30px; 
-            background: #00ff41; 
-            border: none; 
-            color: #000; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: 0.3s;
-        }
+    .ai-msg { 
+        align-self: flex-start; 
+        background: var(--user-msg); 
+        border: 1px solid #30363d;
+    }
 
-        button:hover { 
-            background: #ffffff; 
-            box-shadow: 0 0 15px #00ff41; 
-        }
+    .label {
+        font-size: 11px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        opacity: 0.7;
+        display: block;
+    }
 
-        /* Кастомний скроллбар */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #00ff41; border-radius: 10px; }
+    #input-area { 
+        padding: 20px;
+        background: rgba(0,0,0,0.2);
+        display: flex; 
+        gap: 10px; 
+    }
 
-        .system-msg { color: #888; font-size: 12px; font-style: italic; }
-    </style>
-</head>
-<body>
+    input { 
+        flex: 1; 
+        padding: 12px 20px; 
+        background: #0d1117; 
+        border: 1px solid #30363d; 
+        border-radius: 6px;
+        color: #fff; 
+        font-size: 15px;
+        transition: 0.2s;
+    }
 
-    <div id="chat-container">
-        <h2>> U-A-CORE_v2.0_ONLINE</h2>
-        <div id="chat-box">
-            <div class="system-msg">[SYSTEM]: Ініціалізація протоколів...</div>
-            <div class="system-msg">[SYSTEM]: Зв'язок із сервером встановлено.</div>
-            <div class="system-msg">[SYSTEM]: CPU i7: Стан стабільний. Температура: 48°C.</div>
-            <div class="message"><span class="ai-label">CORE:</span> Вітаю, Олександре. Систему U-A-CORE запущено. Чекаю на твої вказівки.</div>
-        </div>
-        <div id="input-area">
-            <input type="text" id="userInput" placeholder="Введіть запит для ШІ..." autocomplete="off">
-            <button onclick="sendMessage()">RUN_CMD</button>
+    input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+    }
+
+    button { 
+        padding: 0 25px; 
+        background: var(--accent); 
+        border: none; 
+        border-radius: 6px;
+        color: #fff; 
+        font-weight: 600;
+        cursor: pointer; 
+        transition: 0.2s;
+    }
+
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .system-msg { 
+        text-align: center;
+        color: #8b949e; 
+        font-size: 12px; 
+        margin: 5px 0;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+</style>
+
+<div id="chat-container">
+    <h2>U-A-CORE 2.0 | Advanced Intelligence System</h2>
+    <div id="chat-box">
+        <div class="system-msg">Систему ініціалізовано. Усі модулі працюють штатно.</div>
+        <div class="message ai-msg">
+            <span class="label">System Core</span>
+            Вітаю, Олександре. Протоколи активовані. Готовий до роботи.
         </div>
     </div>
-
-    <script>
-        // Твої дані вшиті в систему
-        const KEY = 'AIzaSyColLu4_IspH17YO5H5Lv2jt-M7dQBxO10'; 
-        const MODEL_NAME = "gemini-1.5-flash-latest";
-
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const chatBox = document.getElementById('chat-box');
-            const userText = input.value.trim();
-
-            if (!userText) return;
-
-            // Вивід повідомлення користувача
-            chatBox.innerHTML += `<div class="message"><span class="user-label">USER:</span> ${userText}</div>`;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                // Виклик API Google Gemini
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ 
-                            parts: [{ text: userText }] 
-                        }]
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-
-                // Отримуємо відповідь від ШІ
-                const resultText = data.candidates[0].content.parts[0].text;
-                chatBox.innerHTML += `<div class="message"><span class="ai-label">CORE:</span> ${resultText}</div>`;
-            } catch (err) {
-                chatBox.innerHTML += `<div class="message" style="color: #ff0000;">[FATAL_ERROR]: ${err.message}</div>`;
-                console.error("Помилка запиту:", err);
-            }
-            
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // Обробка натискання клавіші Enter
-        document.getElementById('userInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    </script>
-</body>
-</html>
+    <div id="input-area">
+        <input type="text" id="userInput" placeholder="Введіть запит..." autocomplete="off">
+        <button onclick="sendMessage()">Надіслати</button>
+    </div>
+</div>
