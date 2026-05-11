@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U-A-CORE | SDU Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <aside>
+        <div class="logo-area">
+            <div class="logo-icon"></div>
+            <div class="logo-text">U-A-CORE 2.0</div>
+        </div>
+        <nav class="nav-list">
+            <div class="nav-item active">Основний термінал</div>
+            <div class="nav-item">Історія (Firebase)</div>
+            <div class="nav-item">SDU Модулі</div>
+        </nav>
+        <div class="system-footer">
+            SDU AI SYSTEM v2.0.4<br>
+            STABLE RELEASE
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <div class="status-badge">● SYSTEM_ONLINE</div>
+            <div class="system-info">
+                <span>KRYVYI RIH NODE</span>
+                <span>ENC: AES-256</span>
+            </div>
+        </header>
+
+        <div id="chat-box">
+            <div class="msg-group">
+                <div class="msg-header">System Core</div>
+                <div class="message ai-msg">Вітаю, Олександре. Систему розділено на модулі. Готовий до роботи.</div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Надіслати повідомлення..." autocomplete="off">
+                <button id="sendBtn">↑</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
