@@ -1,155 +1,251 @@
-<style>
-    :root {
-        --bg: #0b0e14;
-        --panel: #161b22;
-        --accent: #58a6ff; /* Серйозний синій, як у GitHub/Microsoft */
-        --text: #c9d1d9;
-        --user-msg: #21262d;
-    }
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U-A-CORE 2.0 | SDU-AI SYSTEM</title>
+    <style>
+        :root {
+            --bg-dark: #080a0c;
+            --sidebar-bg: #0d1117;
+            --main-accent: #00d4ff;
+            --text-main: #e6edf3;
+            --border-color: #30363d;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
 
-    body { 
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-        background: var(--bg); 
-        color: var(--text); 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        height: 100vh; 
-        margin: 0; 
-    }
+        body { 
+            font-family: 'Inter', -apple-system, system-ui, sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    #chat-container { 
-        width: 90%; 
-        max-width: 1000px; 
-        height: 85vh;
-        background: var(--panel); 
-        border: 1px solid #30363d;
-        border-radius: 12px; 
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        overflow: hidden;
-    }
+        /* Бічна панель з метриками */
+        #sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    h2 { 
-        font-size: 14px;
-        font-weight: 600;
-        padding: 15px 20px;
-        margin: 0;
-        background: rgba(255,255,255,0.03);
-        border-bottom: 1px solid #30363d;
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+        .system-status {
+            margin-bottom: 30px;
+        }
 
-    h2::before {
-        content: '';
-        width: 8px;
-        height: 8px;
-        background: #238636; /* Зелений індикатор статусу */
-        border-radius: 50%;
-        display: inline-block;
-    }
+        .status-item {
+            font-size: 12px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--glass);
+            border-radius: 6px;
+            border-left: 3px solid var(--main-accent);
+        }
 
-    #chat-box { 
-        flex: 1;
-        overflow-y: auto; 
-        padding: 25px; 
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+        .status-label { color: #8b949e; text-transform: uppercase; font-size: 10px; display: block; }
+        .status-value { font-weight: 600; display: block; margin-top: 4px; }
 
-    .message { 
-        max-width: 80%;
-        padding: 12px 16px; 
-        border-radius: 10px;
-        line-height: 1.5;
-        font-size: 15px;
-        position: relative;
-    }
+        /* Основний робочий простір */
+        #main-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
 
-    .user-msg { 
-        align-self: flex-end; 
-        background: var(--accent); 
-        color: #fff;
-    }
+        header {
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(10px);
+        }
 
-    .ai-msg { 
-        align-self: flex-start; 
-        background: var(--user-msg); 
-        border: 1px solid #30363d;
-    }
+        .logo { font-weight: 800; letter-spacing: 2px; color: var(--main-accent); font-size: 18px; }
 
-    .label {
-        font-size: 11px;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-        opacity: 0.7;
-        display: block;
-    }
+        #chat-box { 
+            flex: 1;
+            overflow-y: auto; 
+            padding: 40px 10%; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
 
-    #input-area { 
-        padding: 20px;
-        background: rgba(0,0,0,0.2);
-        display: flex; 
-        gap: 10px; 
-    }
+        /* Стилізація повідомлень */
+        .msg-wrapper { display: flex; flex-direction: column; width: 100%; }
+        .user-row { align-items: flex-end; }
+        .ai-row { align-items: flex-start; }
 
-    input { 
-        flex: 1; 
-        padding: 12px 20px; 
-        background: #0d1117; 
-        border: 1px solid #30363d; 
-        border-radius: 6px;
-        color: #fff; 
-        font-size: 15px;
-        transition: 0.2s;
-    }
+        .message { 
+            max-width: 75%;
+            padding: 15px 20px; 
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
 
-    input:focus {
-        outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-    }
+        .user-msg { 
+            background: var(--main-accent); 
+            color: #000;
+            font-weight: 500;
+            border-bottom-right-radius: 2px;
+        }
 
-    button { 
-        padding: 0 25px; 
-        background: var(--accent); 
-        border: none; 
-        border-radius: 6px;
-        color: #fff; 
-        font-weight: 600;
-        cursor: pointer; 
-        transition: 0.2s;
-    }
+        .ai-msg { 
+            background: #161b22; 
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px;
+        }
 
-    button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .msg-info { font-size: 10px; color: #8b949e; margin-bottom: 5px; text-transform: uppercase; }
 
-    .system-msg { 
-        text-align: center;
-        color: #8b949e; 
-        font-size: 12px; 
-        margin: 5px 0;
-    }
+        /* Поле вводу */
+        #input-area { 
+            padding: 30px 10%;
+            background: linear-gradient(to top, var(--bg-dark), transparent);
+        }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
-</style>
+        .input-wrapper {
+            display: flex;
+            background: #161b22;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px;
+            transition: 0.3s;
+        }
 
-<div id="chat-container">
-    <h2>U-A-CORE 2.0 | Advanced Intelligence System</h2>
-    <div id="chat-box">
-        <div class="system-msg">Систему ініціалізовано. Усі модулі працюють штатно.</div>
-        <div class="message ai-msg">
-            <span class="label">System Core</span>
-            Вітаю, Олександре. Протоколи активовані. Готовий до роботи.
+        .input-wrapper:focus-within { border-color: var(--main-accent); box-shadow: 0 0 15px rgba(0, 212, 255, 0.2); }
+
+        input { 
+            flex: 1; 
+            padding: 12px 15px; 
+            background: transparent; 
+            border: none; 
+            color: #fff; 
+            font-size: 16px;
+            outline: none; 
+        }
+
+        button { 
+            background: var(--main-accent); 
+            border: none; 
+            border-radius: 8px;
+            color: #000; 
+            padding: 0 25px;
+            font-weight: 700;
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+
+        button:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <aside id="sidebar">
+        <div class="logo">U-A-CORE</div>
+        <div style="font-size: 10px; color: #58a6ff; margin-bottom: 40px;">QUANTUM INTERFACE v2.0</div>
+        
+        <div class="system-status">
+            <div class="status-item">
+                <span class="status-label">Master User</span>
+                <span class="status-value">Олександр</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Neural Engine</span>
+                <span class="status-value">Gemini 3.0 Flash</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Hardware Link</span>
+                <span class="status-value">i7-4790 | RX 570</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Status</span>
+                <span class="status-value" style="color: #238636;">● ONLINE</span>
+            </div>
         </div>
-    </div>
-    <div id="input-area">
-        <input type="text" id="userInput" placeholder="Введіть запит..." autocomplete="off">
-        <button onclick="sendMessage()">Надіслати</button>
-    </div>
-</div>
+    </aside>
+
+    <main id="main-view">
+        <header>
+            <div style="font-size: 12px; opacity: 0.6;">SESSION_ID: 0xFD226</div>
+            <div style="font-size: 12px; opacity: 0.6;">KRYVYI RIH DETACHMENT</div>
+        </header>
+
+        <div id="chat-box">
+            <div class="msg-wrapper ai-row">
+                <span class="msg-info">System Core • Зараз</span>
+                <div class="message ai-msg">Протоколи U-A-CORE активовані. Очікую введення директив, Олександре.</div>
+            </div>
+        </div>
+
+        <div id="input-area">
+            <div class="input-wrapper">
+                <input type="text" id="userInput" placeholder="Введіть команду для системи..." autocomplete="off">
+                <button onclick="sendMessage()">EXECUTE</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const KEY = 'AIzaSyColLu4_IspH17YO5H5Lv2jt-M7dQBxO10'; 
+        const MODEL_NAME = "gemini-1.5-flash-latest";
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chat-box');
+            const userText = input.value.trim();
+
+            if (!userText) return;
+
+            // Додаємо повідомлення користувача
+            chatBox.innerHTML += `
+                <div class="msg-wrapper user-row">
+                    <span class="msg-info">User • Олександре</span>
+                    <div class="message user-msg">${userText}</div>
+                </div>`;
+            
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userText }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const resultText = data.candidates[0].content.parts[0].text;
+
+                // Додаємо відповідь ШІ
+                chatBox.innerHTML += `
+                    <div class="msg-wrapper ai-row">
+                        <span class="msg-info">Core Intelligence</span>
+                        <div class="message ai-msg">${resultText}</div>
+                    </div>`;
+                
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                chatBox.innerHTML += `<div style="color: #ff4444; font-size: 12px; text-align:center;">[ERR]: Спроба зв'язку перервана: ${err.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
