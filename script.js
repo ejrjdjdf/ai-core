@@ -9,18 +9,17 @@ async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    // Додаємо повідомлення користувача
     renderMessage('Александр', text, 'user-msg');
     userInput.value = '';
 
-    const systemPrompt = "Ти — інтелектуальне ядро U-A-CORE 2.0. Твій творець — Олександр. Працюєш на i7-4790 та RX 570.";
+    const systemPrompt = "Ти — інтелектуальне ядро U-A-CORE 2.0. Твій творець — Олександр. Ти працюєш на i7-4790 та RX 570. Стиль: лаконічний, професійний.";
 
     try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt + "\n\nЗапит: " + text }] }]
+                contents: [{ parts: [{ text: systemPrompt + "\n\nКористувач: " + text }] }]
             })
         });
 
@@ -29,7 +28,7 @@ async function sendMessage() {
         
         renderMessage('Core Intelligence', aiText, 'ai-msg');
     } catch (err) {
-        console.error("Error:", err);
+        console.error("Помилка:", err);
     }
 }
 
