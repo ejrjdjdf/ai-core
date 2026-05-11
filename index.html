@@ -1,68 +1,242 @@
-/* ПОВНЕ ПЕРЕЗАВАНТАЖЕННЯ ДИЗАЙНУ */
-:root {
-    --main-bg: #0d1117;
-    --card-bg: #161b22;
-    --accent-glow: #58a6ff;
-    --text-color: #f0f6fc;
-}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U-A-CORE 2.0 | Intelligence System</title>
+    <style>
+        /* СУЧАСНИЙ ДИЗАЙН (CSS) */
+        :root {
+            --bg: #0d1117;
+            --panel: #161b22;
+            --accent: #58a6ff; 
+            --text: #c9d1d9;
+            --border: #30363d;
+            --input-bg: #090c10;
+        }
 
-body {
-    background: var(--main-bg) !important; /* Міняємо фон на темно-синій */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
 
-#chat-container {
-    width: 80% !important;
-    height: 80% !important;
-    background: var(--card-bg) !important;
-    border: 1px solid #30363d !important;
-    border-radius: 20px !important; /* Закруглені кути замість гострих */
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+        #chat-container { 
+            width: 95%; 
+            max-width: 1000px; 
+            height: 85vh;
+            background: var(--panel); 
+            border: 1px solid var(--border);
+            border-radius: 12px; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
 
-/* Прибираємо ту зелену рамку назавжди */
-h2 {
-    background: rgba(255,255,255,0.05) !important;
-    color: var(--accent-glow) !important;
-    padding: 20px !important;
-    text-align: left !important;
-    font-size: 16px !important;
-    border-bottom: 1px solid #30363d !important;
-}
+        header { 
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-#chat-box {
-    background: transparent !important;
-    padding: 30px !important;
-}
+        header h2 {
+            font-size: 14px;
+            margin: 0;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-.message {
-    background: #21262d !important;
-    border-radius: 15px !important;
-    color: var(--text-color) !important;
-    padding: 15px !important;
-    border: none !important;
-    margin-bottom: 20px !important;
-}
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #238636;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            box-shadow: 0 0 8px #238636;
+        }
 
-input {
-    background: #0d1117 !important;
-    border: 1px solid #30363d !important;
-    border-radius: 10px !important;
-    padding: 15px !important;
-    color: white !important;
-}
+        #chat-box { 
+            flex: 1;
+            overflow-y: auto; 
+            padding: 25px; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: var(--bg);
+        }
 
-button {
-    background: var(--accent-glow) !important;
-    border-radius: 10px !important;
-    color: white !important;
-    text-transform: none !important;
-}
+        .msg-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .message { 
+            max-width: 80%;
+            padding: 14px 20px; 
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 15px;
+            position: relative;
+        }
+
+        /* Стиль повідомлень ШІ */
+        .ai-container { align-items: flex-start; }
+        .ai-msg { 
+            background: var(--panel); 
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .ai-label { color: var(--accent); font-size: 11px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+
+        /* Стиль твоїх повідомлень */
+        .user-container { align-items: flex-end; }
+        .user-msg { 
+            background: var(--accent); 
+            color: #ffffff;
+            border: none;
+        }
+        .user-label { color: #8b949e; font-size: 11px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+
+        #input-area { 
+            padding: 20px 25px;
+            background: var(--panel);
+            border-top: 1px solid var(--border);
+            display: flex; 
+            gap: 15px; 
+        }
+
+        input { 
+            flex: 1; 
+            padding: 14px 18px; 
+            background: var(--input-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 8px;
+            color: #fff; 
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
+
+        button { 
+            padding: 0 30px; 
+            background: var(--accent); 
+            border: none; 
+            border-radius: 8px;
+            color: #fff; 
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer; 
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+        button:hover { background: #79c0ff; transform: translateY(-1px); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <header>
+            <h2>U-A-CORE v2.0</h2>
+            <div style="font-size: 11px; color: #8b949e;">
+                <span class="status-dot"></span> СИСТЕМА АКТИВНА
+            </div>
+        </header>
+
+        <div id="chat-box">
+            <div class="msg-container ai-container">
+                <span class="ai-label">Core System</span>
+                <div class="message ai-msg">Вітаю, Олександре. Протоколи U-A-CORE активовані. Система готова до роботи.</div>
+            </div>
+        </div>
+
+        <div id="input-area">
+            <input type="text" id="userInput" placeholder="Введіть запит для ШІ..." autocomplete="off">
+            <button onclick="sendMessage()">Запустити</button>
+        </div>
+    </div>
+
+    <script>
+        // Твій ключ та налаштування моделі
+        const KEY = 'AIzaSyColLu4_IspH17YO5H5Lv2jt-M7dQBxO10'; 
+        const MODEL_NAME = "gemini-1.5-flash-latest";
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chat-box');
+            const userText = input.value.trim();
+
+            if (!userText) return;
+
+            // Відображаємо повідомлення користувача (тебе)
+            chatBox.innerHTML += `
+                <div class="msg-container user-container">
+                    <span class="user-label">Олександр</span>
+                    <div class="message user-msg">${userText}</div>
+                </div>`;
+            
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Запит до Gemini API
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userText }] }]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+
+                const resultText = data.candidates[0].content.parts[0].text;
+
+                // Відображаємо відповідь ШІ
+                chatBox.innerHTML += `
+                    <div class="msg-container ai-container">
+                        <span class="ai-label">U-A-CORE Intelligence</span>
+                        <div class="message ai-msg">${resultText}</div>
+                    </div>`;
+                
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } catch (err) {
+                chatBox.innerHTML += `
+                    <div style="color: #f85149; font-size: 12px; text-align: center; margin-top: 10px;">
+                        [ПОМИЛКА]: ${err.message}
+                    </div>`;
+                console.error("Критична помилка:", err);
+            }
+        }
+
+        // Відправка по натисканню Enter
+        document.getElementById('userInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
