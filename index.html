@@ -3,141 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>U-A-CORE 2.0 | SDU SYSTEM</title>
+    <title>U-A-CORE | SDU Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* ПОВНИЙ ПЕРЕЗАВАНТАЖЕННЯ ДИЗАЙНУ */
         :root {
-            --main-bg: #0d1117;
-            --card-bg: #161b22;
-            --accent: #58a6ff;
-            --text: #f0f6fc;
-            --border: #30363d;
+            --bg-dark: #0a0c10;
+            --sidebar-bg: #11141a;
+            --accent: #00f2ff; /* Аквамарин SDU Style */
+            --accent-dark: #0088cc;
+            --text-main: #e6edf3;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.03);
         }
 
-        body {
-            background: var(--main-bg);
-            color: var(--text);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+        body, html {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        #chat-container {
-            width: 90%;
-            max-width: 900px;
-            height: 85vh;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 0;
+            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
             overflow: hidden;
         }
 
-        header {
-            padding: 20px;
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid var(--border);
+        .app-wrapper {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            height: 100vh;
+            width: 100vw;
         }
 
-        header h2 {
-            margin: 0;
-            font-size: 16px;
+        /* БІЧНА ПАНЕЛЬ (SIDEBAR) */
+        aside {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        .logo-area {
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-list {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #8b949e;
+            cursor: pointer;
+            margin-bottom: 5px;
+            transition: 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--glass);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(0, 242, 255, 0.1);
             color: var(--accent);
-            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ГОЛОВНИЙ КОНТЕНТ */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        header {
+            height: 70px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            justify-content: space-between;
+            background: rgba(10, 12, 16, 0.7);
+            backdrop-filter: blur(20px);
+            z-index: 10;
+        }
+
+        .system-info {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #484f58;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #3fb950;
+            font-weight: 600;
         }
 
         #chat-box {
             flex: 1;
-            padding: 25px;
             overflow-y: auto;
+            padding: 40px 15%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            background: var(--main-bg);
+            gap: 30px;
+        }
+
+        /* ПОВІДОМЛЕННЯ */
+        .msg-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .msg-header {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #484f58;
         }
 
         .message {
-            max-width: 80%;
-            padding: 14px 18px;
-            border-radius: 12px;
-            font-size: 15px;
-            line-height: 1.5;
+            max-width: 90%;
+            padding: 2px 0;
+            font-size: 16px;
+            line-height: 1.7;
         }
 
-        .ai-msg {
-            align-self: flex-start;
-            background: var(--card-bg);
+        .user-msg { color: #fff; }
+        .ai-msg { color: #c9d1d9; }
+
+        /* ПОЛЕ ВВОДУ (ЯК У ВЕБ-ДОДАТКАХ) */
+        .input-area {
+            padding: 20px 15% 40px 15%;
+            background: linear-gradient(to top, var(--bg-dark) 60%, transparent);
+        }
+
+        .input-container {
+            background: #161b22;
             border: 1px solid var(--border);
-        }
-
-        .user-msg {
-            align-self: flex-end;
-            background: var(--accent);
-            color: white;
-        }
-
-        #input-area {
-            padding: 20px;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 10px 15px;
             display: flex;
-            gap: 12px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         input {
             flex: 1;
-            background: var(--main-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px 15px;
-            color: white;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 12px;
+            font-size: 16px;
             outline: none;
         }
 
-        input:focus { border-color: var(--accent); }
-
         button {
             background: var(--accent);
-            color: white;
+            color: #000;
             border: none;
-            padding: 0 25px;
-            border-radius: 8px;
-            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-weight: 800;
             cursor: pointer;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        button:hover { opacity: 0.8; }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div id="chat-container">
-    <header>
-        <h2>U-A-CORE v2.0 ONLINE</h2>
-        <div style="font-size: 12px; color: #8b949e;">CPU i7-4790 | GPU RX 570</div>
-    </header>
-    
-    <div id="chat-box">
-        <div class="message ai-msg">Система готова. Вітаю, Олександре. Чекаю на твій запит.</div>
-    </div>
+<div class="app-wrapper">
+    <aside>
+        <div class="logo-area">
+            <div class="logo-icon"></div>
+            <div class="logo-text">U-A-CORE 2.0</div>
+        </div>
+        
+        <nav class="nav-list">
+            <div class="nav-item active">Основний термінал</div>
+            <div class="nav-item">Історія сесій</div>
+            <div class="nav-item">SDU Модулі</div>
+            <div class="nav-item">Налаштування Ядра</div>
+        </nav>
 
-    <div id="input-area">
-        <input type="text" id="userInput" placeholder="Введіть команду..." autocomplete="off">
-        <button onclick="sendMessage()">RUN</button>
-    </div>
+        <div style="padding: 20px; font-size: 11px; color: #30363d; border-top: 1px solid var(--border);">
+            SDU AI SYSTEM v2.0.4<br>
+            STABLE RELEASE
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <div class="status-badge">● SYSTEM_ONLINE</div>
+            <div class="system-info">
+                <span>LATENCY: 24ms</span>
+                <span>ENC: AES-256</span>
+            </div>
+        </header>
+
+        <div id="chat-box">
+            <div class="msg-group">
+                <div class="msg-header">System Core Intelligence</div>
+                <div class="message ai-msg">Вітаю, Олександре. Систему ініціалізовано. Чекаю на твої вказівки.</div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Надіслати повідомлення..." autocomplete="off">
+                <button onclick="sendMessage()">↑</button>
+            </div>
+        </div>
+    </main>
 </div>
 
 <script>
-    const KEY = 'AIzaSyColLu4_IspH17YO5H5Lv2jt-M7dQBxO10';
+    const KEY = 'AIzaSyColLu4_IspH17YO5H5Lv2jt-M7dQBxO10'; 
     const MODEL_NAME = "gemini-1.5-flash-latest";
 
     async function sendMessage() {
@@ -147,7 +269,12 @@
 
         if (!userText) return;
 
-        chatBox.innerHTML += `<div class="message user-msg">${userText}</div>`;
+        chatBox.innerHTML += `
+            <div class="msg-group" style="align-items: flex-start;">
+                <div class="msg-header" style="color: var(--accent);">Александр</div>
+                <div class="message user-msg">${userText}</div>
+            </div>`;
+        
         input.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -161,10 +288,15 @@
             const data = await response.json();
             const resultText = data.candidates[0].content.parts[0].text;
 
-            chatBox.innerHTML += `<div class="message ai-msg">${resultText}</div>`;
+            chatBox.innerHTML += `
+                <div class="msg-group">
+                    <div class="msg-header">Core Intelligence</div>
+                    <div class="message ai-msg">${resultText}</div>
+                </div>`;
+            
             chatBox.scrollTop = chatBox.scrollHeight;
         } catch (err) {
-            chatBox.innerHTML += `<div style="color:red; font-size:12px;">Помилка: ${err.message}</div>`;
+            console.error(err);
         }
     }
 
