@@ -1,4 +1,4 @@
-const GEMINI_KEY = 'AIzaSyByVuAIjUjn-0jWb7c_ynhfrVOKUOxO_VQ';
+const GEMINI_KEY = 'AIzaSyA0Pt29Wymx4ay1hDnO6CsP-gnqpfFrbKc';
 // Використовуємо 1.5-flash, вона найшвидша для тестів
 const MODEL_NAME = "gemini-2.5-flash"; 
 
