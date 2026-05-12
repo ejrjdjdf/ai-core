@@ -13,6 +13,7 @@ body, html {
 
 .app-wrapper { display: flex; height: 100vh; }
 
+/* SIDEBAR */
 aside {
     width: 260px; background: var(--sidebar);
     border-right: 1px solid var(--border);
@@ -23,62 +24,68 @@ aside {
 .logo-u {
     width: 35px; height: 35px; background: #fff; color: #000;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 20px;
+    font-weight: 900; font-size: 20px; border-radius: 2px;
 }
 .logo-text { font-weight: 900; font-size: 18px; letter-spacing: -1px; text-transform: uppercase; }
 
-.nav-list { flex: 1; }
+.nav-list { flex: 1; display: flex; flex-direction: column; }
 
-/* АНІМАЦІЯ ПОЛОСОК (Еквалайзер) */
-.visualizer {
-    display: flex; align-items: flex-end; gap: 5px; height: 60px; padding: 20px 0;
+.sidebar-section.full-height { 
+    flex: 1; display: flex; flex-direction: column; padding: 0 25px 20px 25px; 
+}
+.section-title { font-size: 10px; font-weight: 800; color: #222; letter-spacing: 2px; margin-bottom: 20px; }
+
+/* ЕКВАЛАЙЗЕР НА ВЕСЬ САЙДБАР */
+.visualizer-full {
+    flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
 .bar {
-    width: 4px; height: 20%; background: #fff;
-    animation: bounce 0.8s ease-in-out infinite;
+    flex: 1; min-width: 6px; height: 100%;
+    animation: bounce-full 1.2s ease-in-out infinite;
 }
-/* Різні кольори та затримка для кожної полоски */
 .bar:nth-child(1) { background: #ff0055; animation-delay: 0.1s; }
 .bar:nth-child(2) { background: #00f2ff; animation-delay: 0.3s; }
 .bar:nth-child(3) { background: #7000ff; animation-delay: 0.2s; }
 .bar:nth-child(4) { background: #3fb950; animation-delay: 0.4s; }
-.bar:nth-child(5) { background: #ff9900; animation-delay: 0.1s; }
-.bar:nth-child(6) { background: #ffffff; animation-delay: 0.5s; }
+.bar:nth-child(5) { background: #ff9900; animation-delay: 0.6s; }
+.bar:nth-child(6) { background: #ffffff; animation-delay: 0.1s; }
+.bar:nth-child(7) { background: #00f2ff; animation-delay: 0.4s; }
+.bar:nth-child(8) { background: #ff0055; animation-delay: 0.2s; }
 
-@keyframes bounce {
-    0%, 100% { height: 20%; }
-    50% { height: 100%; }
+@keyframes bounce-full {
+    0%, 100% { height: 15%; opacity: 0.3; }
+    50% { height: 95%; opacity: 1; }
 }
 
-.sidebar-section { padding: 0 25px; }
-.section-title { font-size: 10px; font-weight: 800; color: #333; letter-spacing: 2px; margin-bottom: 20px; }
-
-.system-footer { padding: 25px; font-size: 10px; color: #222; border-top: 1px solid var(--border); margin-top: auto; }
+.system-footer { padding: 25px; font-size: 10px; color: #222; border-top: 1px solid var(--border); }
 .pulse-text { color: #444; animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* ЧАТ: ЗЛІВА ТА СПРАВА */
-main { flex: 1; display: flex; flex-direction: column; position: relative; }
-#chat-box { flex: 1; overflow-y: auto; padding: 60px 10%; display: flex; flex-direction: column; gap: 30px; }
+/* ЧАТ */
+main { flex: 1; display: flex; flex-direction: column; }
+#chat-box { flex: 1; overflow-y: auto; padding: 60px 10%; display: flex; flex-direction: column; gap: 35px; }
 
-.msg-group { display: flex; flex-direction: column; max-width: 80%; }
+.msg-group { display: flex; flex-direction: column; max-width: 85%; }
 
 /* SDU_CORE (Зліва) */
 .ai-group { align-self: flex-start; }
-.ai-msg { color: #888; font-size: 18px; line-height: 1.5; border-left: 2px solid #222; padding-left: 20px; }
+.ai-msg { color: #888; font-size: 19px; line-height: 1.5; border-left: 2px solid #222; padding-left: 20px; }
 
-/* Користувач (Справа) */
+/* USER (Справа) */
 .user-group { align-self: flex-end; text-align: right; }
-.user-msg { color: #fff; font-size: 18px; font-weight: 600; border-right: 2px solid #fff; padding-right: 20px; }
+.user-msg { color: #fff; font-size: 19px; font-weight: 600; border-right: 2px solid #fff; padding-right: 20px; }
 
-.msg-header { font-size: 9px; font-weight: 900; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; }
+.msg-header { font-size: 10px; font-weight: 900; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; }
 
-/* ПОЛЕ ВВОДУ */
-.input-area { padding: 30px 10%; }
+/* ВВІД */
+.input-area { padding: 30px 10% 50px 10%; }
 .input-container { 
-    background: #050505; border: 1px solid #111; padding: 10px 20px; 
-    display: flex; align-items: center; border-radius: 4px;
+    background: #050505; border: 1px solid #111; padding: 12px 25px; 
+    display: flex; align-items: center; border-radius: 4px; gap: 15px;
 }
-input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 16px; }
-button { background: transparent; border: none; color: #444; cursor: pointer; transition: 0.3s; }
-button:hover { color: #fff; transform: scale(1.1); }
+input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 17px; }
+button { background: transparent; border: none; color: #333; cursor: pointer; transition: 0.3s; display: flex; }
+button:hover { color: #fff; transform: translateX(5px); }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: #111; }
