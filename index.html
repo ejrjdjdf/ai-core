@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>U-A-CORE | ALPHA 1.0.0</title>
-    <link rel="stylesheet" href="style.css?v=final_alpha">
+    <link rel="stylesheet" href="style.css?v=final_fix">
 </head>
 <body>
 
@@ -61,7 +61,8 @@
   const firebaseConfig = {
     apiKey: "AIzaSyB12aMvm2OZqapf2bjR-4hkESZeTiblJYg",
     authDomain: "ai-core-v2.firebaseapp.com",
-    databaseURL: "https://ai-core-v2-default-rtdb.europe-west1.firebasedatabase.app",
+    // ВИПРАВЛЕНО: Правильний URL для твого регіону
+    databaseURL: "https://ai-core-v2-default-rtdb.firebaseio.com", 
     projectId: "ai-core-v2",
     storageBucket: "ai-core-v2.firebasestorage.app",
     messagingSenderId: "830503834257",
@@ -72,7 +73,6 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Перекидаємо функції в глобальне вікно для script.js
   window.db = db;
   window.dbRef = ref;
   window.dbPush = push;
