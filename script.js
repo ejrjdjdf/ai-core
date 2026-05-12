@@ -1,6 +1,6 @@
 const GEMINI_KEY = 'AIzaSyByVuAIjUjn-0jWb7c_ynhfrVOKUOxO_VQ';
 // Використовуємо 1.5-flash, вона найшвидша для тестів
-const MODEL_NAME = "gemini-1.5-flash"; 
+const MODEL_NAME = "gemini-2.5-flash"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
