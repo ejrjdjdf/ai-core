@@ -9,34 +9,36 @@ async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    renderMessage('Александр', text, 'user-msg');
+    // Рендеримо повідомлення користувача (справа)
+    renderMessage('USER_COMMAND', text, 'user-group', 'user-msg');
     userInput.value = '';
 
-    const systemPrompt = "Ти — інтелектуальне ядро U-A-CORE 2.0. Твій творець — Олександр. Ти працюєш на i7-4790 та RX 570. Стиль: лаконічний, професійний.";
+    const systemPrompt = "Ти — інтелектуальне ядро U-A-CORE 2.0. Стиль SDU_CORP. Відповідай лаконічно.";
 
     try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt + "\n\nКористувач: " + text }] }]
+                contents: [{ parts: [{ text: systemPrompt + "\n\nЗапит: " + text }] }]
             })
         });
 
         const data = await response.json();
         const aiText = data.candidates[0].content.parts[0].text;
         
-        renderMessage('Core Intelligence', aiText, 'ai-msg');
+        // Рендеримо відповідь ядра (зліва)
+        renderMessage('SDU_CORE', aiText, 'ai-group', 'ai-msg');
     } catch (err) {
         console.error("Помилка:", err);
     }
 }
 
-function renderMessage(sender, text, className) {
+function renderMessage(sender, text, groupClass, msgClass) {
     chatBox.innerHTML += `
-        <div class="msg-group">
+        <div class="msg-group ${groupClass}">
             <div class="msg-header">${sender}</div>
-            <div class="message ${className}">${text}</div>
+            <div class="message ${msgClass}">${text}</div>
         </div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 }
