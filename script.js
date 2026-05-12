@@ -1,18 +1,18 @@
 const GEMINI_KEY = 'AIzaSyByVuAIjUjn-0jWb7c_ynhfrVOKUOxO_VQ';
-const MODEL_NAME = "gemini-1.5-flash-latest";
+// ВИПРАВЛЕНО: Використовуємо стабільну назву моделі
+const MODEL_NAME = "gemini-1.5-flash"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// 1. ФУНКЦІЯ ВІДПРАВКИ
 async function sendMessage() {
     const text = userInput.value.trim();
-    if (!text || !window.dbPush) return; // Перевірка чи завантажився Firebase
+    if (!text || !window.dbPush) return;
 
     userInput.value = '';
     
-    // Зберігаємо юзера в Realtime Database
+    // Зберігаємо в Realtime Database
     window.dbPush(window.dbRef(window.db, 'messages'), {
         sender: 'USER',
         text: text,
@@ -20,33 +20,38 @@ async function sendMessage() {
     });
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_KEY}`, {
+        // ВИПРАВЛЕНО: URL на стабільну версію v1
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/${MODEL_NAME}:generateContent?key=${GEMINI_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Ти — ядро SDU_CORE. Відповідай лаконічно. Запит: " + text }] }]
+                contents: [{ parts: [{ text: "Ти — ядро SDU_CORE. Відповідай коротко. Запит: " + text }] }]
             })
         });
 
         const data = await response.json();
-        const aiText = data.candidates[0].content.parts[0].text;
 
-        // Зберігаємо відповідь ШІ
-        window.dbPush(window.dbRef(window.db, 'messages'), {
-            sender: 'SDU_CORE',
-            text: aiText,
-            timestamp: Date.now()
-        });
+        // ВИПРАВЛЕНО: Перевірка наявності даних перед читанням [0]
+        if (data.candidates && data.candidates.length > 0) {
+            const aiText = data.candidates[0].content.parts[0].text;
+
+            window.dbPush(window.dbRef(window.db, 'messages'), {
+                sender: 'SDU_CORE',
+                text: aiText,
+                timestamp: Date.now()
+            });
+        } else {
+            console.error("API Error Response:", data);
+        }
 
     } catch (err) {
-        console.error("Помилка API:", err);
+        console.error("Network Error:", err);
     }
 }
 
-// 2. СЛУХАЄМО БАЗУ (Авто-оновлення екрану)
 function initSync() {
     if (!window.dbOnValue) {
-        setTimeout(initSync, 100); // Чекаємо завантаження Firebase модуля
+        setTimeout(initSync, 100);
         return;
     }
     
@@ -78,5 +83,4 @@ function renderMessage(sender, text) {
 sendBtn.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-// Запускаємо синхронізацію
 initSync();
