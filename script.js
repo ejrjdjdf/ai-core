@@ -1,6 +1,6 @@
 // Ми не пишемо ключ тут, щоб GitHub його не забанив
 let GEMINI_KEY = sessionStorage.getItem('AIzaSyBcw-ACv0RnjFnA92U2822gprGV6sEw3U4') || ''; 
-const MODEL_NAME = "gemini-2.5-flash"; 
+const MODEL_NAME = "gemini-1.5-flash"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
