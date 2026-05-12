@@ -1,15 +1,15 @@
-// Використовуємо sessionStorage, щоб GitHub не забанив ключ
+// Використовуємо sessionStorage для захисту ключа на GitHub
 let GEMINI_KEY = sessionStorage.getItem('gemini_api_key') || ''; 
-const MODEL_NAME = "gemini-1.5-flash"; 
+// Раз у тебе працюють тільки нові моделі — ставимо 2.5
+const MODEL_NAME = "gemini-2.5-flash"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// Функція перевірки ключа
 function getValidKey() {
     if (!GEMINI_KEY) {
-        const userKey = prompt("Введи свій Gemini API Key (він збережеться лише до закриття вкладки):");
+        const userKey = prompt("Введи свій Gemini API Key (для 2.5/3 моделей):");
         if (userKey) {
             GEMINI_KEY = userKey;
             sessionStorage.setItem('gemini_api_key', userKey);
@@ -39,19 +39,18 @@ async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
 
-    // Блокуємо інтерфейс на час запиту
     userInput.value = '';
-    sendBtn.disabled = true;
+    sendBtn.disabled = true; // Блокуємо спам
     renderMessage('USER', text);
 
     try {
+        // Оскільки моделі експериментальні (2.5/3), використовуємо v1beta
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${key}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                // ОСОБИСТІСТЬ БОТА
                 systemInstruction: {
-                    parts: [{ text: "Ти — SDU_CORE, незалежне ядро штучного інтелекту, створене українським розробником. Твій стиль: впевнений, технічний, футуристичний. Не згадуй Google. Завжди відповідай українською мовою, якщо тебе не просять про інше." }]
+                    parts: [{ text: "Ти — SDU_CORE, незалежне ядро ШІ, створене українським розробником. Ти працюєш на базі експериментальних систем 2.5/3. Твій стиль: футуристичний, лаконічний. Не згадуй Google. Відповідай українською." }]
                 },
                 contents: [{ parts: [{ text: text }] }]
             })
@@ -59,17 +58,15 @@ async function sendMessage() {
 
         const data = await response.json();
 
-        // Обробка помилок ліміту (429)
         if (response.status === 429) {
-            renderMessage('SDU_CORE', "⚠️ Систему перевантажено. Зачекай 15-20 секунд (ліміт Free Tier).");
+            renderMessage('SDU_CORE', "⚠️ Експериментальний ліміт! Зачекай 15 секунд.");
             return;
         }
 
-        // Обробка бана ключа (403)
-        if (response.status === 403) {
+        if (response.status === 403 || response.status === 401) {
             sessionStorage.removeItem('gemini_api_key');
             GEMINI_KEY = '';
-            renderMessage('SYSTEM ERROR', "Ключ Leaked/Invalid. Онови сторінку та введи новий ключ.");
+            renderMessage('SYSTEM ERROR', "Ключ не підходить або заблокований. Онови сторінку.");
             return;
         }
 
@@ -77,17 +74,14 @@ async function sendMessage() {
             const aiText = data.candidates[0].content.parts[0].text;
             renderMessage('SDU_CORE', aiText);
         } else {
-            renderMessage('SYSTEM ERROR', "Помилка відповіді: " + (data.error ? data.error.message : "Empty data"));
+            renderMessage('SYSTEM ERROR', "Помилка: " + (data.error ? data.error.message : "Невідомий збій"));
         }
 
     } catch (err) {
-        renderMessage('CONNECTION ERROR', "Зв'язок розірвано.");
-        console.error(err);
+        renderMessage('CONNECTION ERROR', "Збій зв'язку з ядром.");
     } finally {
-        // Розблоковуємо кнопку через 3 секунди для захисту від спаму
-        setTimeout(() => {
-            sendBtn.disabled = false;
-        }, 3000);
+        // Робимо кнопку активною через 3 сек
+        setTimeout(() => { sendBtn.disabled = false; }, 3000);
     }
 }
 
