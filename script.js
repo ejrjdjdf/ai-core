@@ -1,72 +1,12 @@
 const GEMINI_KEY = 'AIzaSyByVuAIjUjn-0jWb7c_ynhfrVOKUOxO_VQ';
-// ВИПРАВЛЕНО: Використовуємо стабільну назву моделі
-const MODEL_NAME = "gemini-1.5-flash"; 
+// Використовуємо 1.5-flash, вона найшвидша для тестів
+const MODEL_NAME = "gemini-1.5-pro"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-async function sendMessage() {
-    const text = userInput.value.trim();
-    if (!text || !window.dbPush) return;
-
-    userInput.value = '';
-    
-    // Зберігаємо в Realtime Database
-    window.dbPush(window.dbRef(window.db, 'messages'), {
-        sender: 'USER',
-        text: text,
-        timestamp: Date.now()
-    });
-
-    try {
-        // ВИПРАВЛЕНО: URL на стабільну версію v1
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/${MODEL_NAME}:generateContent?key=${GEMINI_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: "Ти — ядро SDU_CORE. Відповідай коротко. Запит: " + text }] }]
-            })
-        });
-
-        const data = await response.json();
-
-        // ВИПРАВЛЕНО: Перевірка наявності даних перед читанням [0]
-        if (data.candidates && data.candidates.length > 0) {
-            const aiText = data.candidates[0].content.parts[0].text;
-
-            window.dbPush(window.dbRef(window.db, 'messages'), {
-                sender: 'SDU_CORE',
-                text: aiText,
-                timestamp: Date.now()
-            });
-        } else {
-            console.error("API Error Response:", data);
-        }
-
-    } catch (err) {
-        console.error("Network Error:", err);
-    }
-}
-
-function initSync() {
-    if (!window.dbOnValue) {
-        setTimeout(initSync, 100);
-        return;
-    }
-    
-    window.dbOnValue(window.dbRef(window.db, 'messages'), (snapshot) => {
-        chatBox.innerHTML = '';
-        const data = snapshot.val();
-        if (data) {
-            Object.values(data).forEach(msg => {
-                renderMessage(msg.sender, msg.text);
-            });
-        }
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
-}
-
+// Функція для відображення повідомлень на екрані (без бази)
 function renderMessage(sender, text) {
     const isAI = sender === 'SDU_CORE';
     const groupClass = isAI ? 'ai-group' : 'user-group';
@@ -78,9 +18,41 @@ function renderMessage(sender, text) {
             ${headerHtml}
             <div class="message ${msgClass}">${text}</div>
         </div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function sendMessage() {
+    const text = userInput.value.trim();
+    if (!text) return;
+
+    userInput.value = '';
+    renderMessage('USER', text); // Одразу показуємо твоє повідомлення
+
+    try {
+        // Пробуємо шлях v1beta, він зазвичай найбільш відкритий для нових ключів
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: text }] }]
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.candidates && data.candidates[0].content) {
+            const aiText = data.candidates[0].content.parts[0].text;
+            renderMessage('SDU_CORE', aiText);
+        } else {
+            // Якщо API видало помилку, ми побачимо її текст прямо в чаті
+            renderMessage('SYSTEM ERROR', JSON.stringify(data));
+        }
+
+    } catch (err) {
+        renderMessage('CONNECTION ERROR', err.message);
+        console.error(err);
+    }
 }
 
 sendBtn.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-
-initSync();
