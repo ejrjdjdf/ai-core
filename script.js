@@ -1,50 +1,82 @@
-const KEY = 'AIzaSyColLu4_IspH17YO5H5Lv2jt-M7dQBxO10'; 
+const GEMINI_KEY = 'AIzaSyByVuAIjUjn-0jWb7c_ynhfrVOKUOxO_VQ';
 const MODEL_NAME = "gemini-1.5-flash-latest";
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
+// 1. ФУНКЦІЯ ВІДПРАВКИ
 async function sendMessage() {
     const text = userInput.value.trim();
-    if (!text) return;
+    if (!text || !window.dbPush) return; // Перевірка чи завантажився Firebase
 
-    // Рендер користувача (справа, без хедера)
-    renderMessage('USER', text, 'user-group', 'user-msg');
     userInput.value = '';
-
-    const systemPrompt = "Ти — інтелектуальне ядро U-A-CORE 2.0. Стиль SDU_CORP. Відповідай професійно та лаконічно.";
+    
+    // Зберігаємо юзера в Realtime Database
+    window.dbPush(window.dbRef(window.db, 'messages'), {
+        sender: 'USER',
+        text: text,
+        timestamp: Date.now()
+    });
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: systemPrompt + "\n\nЗапит: " + text }] }]
+                contents: [{ parts: [{ text: "Ти — ядро SDU_CORE. Відповідай лаконічно. Запит: " + text }] }]
             })
         });
 
         const data = await response.json();
         const aiText = data.candidates[0].content.parts[0].text;
-        
-        // Рендер ШІ (зліва, з хедером SDU_CORE)
-        renderMessage('SDU_CORE', aiText, 'ai-group', 'ai-msg');
+
+        // Зберігаємо відповідь ШІ
+        window.dbPush(window.dbRef(window.db, 'messages'), {
+            sender: 'SDU_CORE',
+            text: aiText,
+            timestamp: Date.now()
+        });
+
     } catch (err) {
-        console.error("Помилка:", err);
+        console.error("Помилка API:", err);
     }
 }
 
-function renderMessage(sender, text, groupClass, msgClass) {
-    // Показуємо хедер ТІЛЬКИ для SDU_CORE
-    const headerHtml = (sender === 'SDU_CORE') ? `<div class="msg-header">${sender}</div>` : '';
+// 2. СЛУХАЄМО БАЗУ (Авто-оновлення екрану)
+function initSync() {
+    if (!window.dbOnValue) {
+        setTimeout(initSync, 100); // Чекаємо завантаження Firebase модуля
+        return;
+    }
     
+    window.dbOnValue(window.dbRef(window.db, 'messages'), (snapshot) => {
+        chatBox.innerHTML = '';
+        const data = snapshot.val();
+        if (data) {
+            Object.values(data).forEach(msg => {
+                renderMessage(msg.sender, msg.text);
+            });
+        }
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+
+function renderMessage(sender, text) {
+    const isAI = sender === 'SDU_CORE';
+    const groupClass = isAI ? 'ai-group' : 'user-group';
+    const msgClass = isAI ? 'ai-msg' : 'user-msg';
+    const headerHtml = isAI ? `<div class="msg-header">${sender}</div>` : '';
+
     chatBox.innerHTML += `
         <div class="msg-group ${groupClass}">
             ${headerHtml}
             <div class="message ${msgClass}">${text}</div>
         </div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 sendBtn.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+// Запускаємо синхронізацію
+initSync();
