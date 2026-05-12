@@ -1,15 +1,15 @@
-// Ми не пишемо ключ тут, щоб GitHub його не забанив
-let GEMINI_KEY = sessionStorage.getItem('AIzaSyBcw-ACv0RnjFnA92U2822gprGV6sEw3U4') || ''; 
+// Використовуємо sessionStorage, щоб GitHub не забанив ключ
+let GEMINI_KEY = sessionStorage.getItem('gemini_api_key') || ''; 
 const MODEL_NAME = "gemini-1.5-flash"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// Перевірка та запит ключа
+// Функція перевірки ключа
 function getValidKey() {
     if (!GEMINI_KEY) {
-        const userKey = prompt("Введи свій Gemini API Key (він збережеться лише на цю сесію):");
+        const userKey = prompt("Введи свій Gemini API Key (він збережеться лише до закриття вкладки):");
         if (userKey) {
             GEMINI_KEY = userKey;
             sessionStorage.setItem('gemini_api_key', userKey);
@@ -34,15 +34,14 @@ function renderMessage(sender, text) {
 
 async function sendMessage() {
     const key = getValidKey();
-    if (!key) {
-        alert("Без API ключа SDU_CORE не зможе відповісти.");
-        return;
-    }
+    if (!key) return;
 
     const text = userInput.value.trim();
     if (!text) return;
 
+    // Блокуємо інтерфейс на час запиту
     userInput.value = '';
+    sendBtn.disabled = true;
     renderMessage('USER', text);
 
     try {
@@ -50,22 +49,27 @@ async function sendMessage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                // ОСОБИСТІСТЬ БОТА
+                systemInstruction: {
+                    parts: [{ text: "Ти — SDU_CORE, незалежне ядро штучного інтелекту, створене українським розробником. Твій стиль: впевнений, технічний, футуристичний. Не згадуй Google. Завжди відповідай українською мовою, якщо тебе не просять про інше." }]
+                },
                 contents: [{ parts: [{ text: text }] }]
             })
         });
 
         const data = await response.json();
 
-        // Обробка помилок (ліміти або витік)
+        // Обробка помилок ліміту (429)
         if (response.status === 429) {
-            renderMessage('SDU_CORE', "⚠️ Ліміт вичерпано (5 запитів на хв). Зачекай трохи.");
+            renderMessage('SDU_CORE', "⚠️ Систему перевантажено. Зачекай 15-20 секунд (ліміт Free Tier).");
             return;
         }
 
+        // Обробка бана ключа (403)
         if (response.status === 403) {
-            sessionStorage.removeItem('gemini_api_key'); // Видаляємо поганий ключ
+            sessionStorage.removeItem('gemini_api_key');
             GEMINI_KEY = '';
-            renderMessage('SYSTEM ERROR', "Ключ заблоковано (Leaked). Створи новий в AI Studio.");
+            renderMessage('SYSTEM ERROR', "Ключ Leaked/Invalid. Онови сторінку та введи новий ключ.");
             return;
         }
 
@@ -73,13 +77,17 @@ async function sendMessage() {
             const aiText = data.candidates[0].content.parts[0].text;
             renderMessage('SDU_CORE', aiText);
         } else {
-            renderMessage('SYSTEM ERROR', data.error ? data.error.message : "Невідома помилка API.");
-            console.error("Full Data:", data);
+            renderMessage('SYSTEM ERROR', "Помилка відповіді: " + (data.error ? data.error.message : "Empty data"));
         }
 
     } catch (err) {
-        renderMessage('CONNECTION ERROR', "Помилка мережі: " + err.message);
+        renderMessage('CONNECTION ERROR', "Зв'язок розірвано.");
         console.error(err);
+    } finally {
+        // Розблоковуємо кнопку через 3 секунди для захисту від спаму
+        setTimeout(() => {
+            sendBtn.disabled = false;
+        }, 3000);
     }
 }
 
