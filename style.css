@@ -1,105 +1,73 @@
 :root {
-    /* Кольори з SDU сайту */
-    --bg-dark: #000000;          /* Глибокий чорний */
-    --sidebar-bg: #050505;       /* Майже чорний для сайдбару */
-    --accent: #ffffff;           /* Чистий білий для акцентів */
-    --text-main: #ffffff;        /* Білий текст */
-    --text-dim: #666666;         /* Сірий текст (як у підзаголовках SDU) */
-    --border: #111111;           /* Дуже темні межі */
-    --glass: rgba(255, 255, 255, 0.03);
+    --bg: #000000;
+    --sidebar: #030303;
+    --accent: #ffffff;
+    --border: #0f0f0f;
 }
 
 body, html {
     margin: 0; padding: 0; height: 100%;
-    font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
-    background: var(--bg-dark); color: var(--text-main);
+    font-family: 'Inter', 'Courier New', monospace;
+    background: var(--bg); color: #fff;
     overflow: hidden;
 }
 
-.app-wrapper { display: flex; height: 100vh; width: 100vw; }
+.app-wrapper { display: flex; height: 100vh; }
 
-/* SIDEBAR */
 aside {
-    width: 260px; background: var(--sidebar-bg);
+    width: 250px; background: var(--sidebar);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
 }
 
-.logo-area { padding: 30px 20px; display: flex; align-items: center; gap: 12px; }
-
-/* Квадратна іконка як на SDU стилі */
+.logo-area { padding: 40px 25px; display: flex; align-items: center; gap: 12px; }
 .logo-u {
-    width: 35px; height: 35px; 
-    background: var(--accent); 
-    color: #000;
+    width: 30px; height: 30px; background: #fff; color: #000;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 20px; border-radius: 2px; /* Більш гострі кути */
+    font-weight: 900; border-radius: 0; /* Повністю гострі кути */
 }
+.logo-text { font-weight: 900; font-size: 16px; letter-spacing: -1px; }
 
-.logo-text { 
-    font-weight: 900; font-size: 18px; color: #fff; 
-    letter-spacing: -1px; text-transform: uppercase; 
-}
-
-.nav-list { flex: 1; display: flex; flex-direction: column; }
-
-.new-chat-btn {
-    width: calc(100% - 40px); margin: 0 20px 20px 20px; padding: 12px;
-    background: transparent; border: 1px solid #222;
-    border-radius: 2px; color: #fff; cursor: pointer; 
-    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
-    transition: 0.3s;
-}
-.new-chat-btn:hover { border-color: #fff; background: #0a0a0a; }
-
-.sidebar-section { padding: 0 20px 30px 20px; }
+.sidebar-section { padding: 0 25px; }
 .section-title { 
-    font-size: 10px; font-weight: 800; color: #444; 
-    letter-spacing: 3px; display: block; margin-bottom: 15px;
-    border-left: 2px solid #fff; padding-left: 10px; /* Стиль заголовків SDU */
+    font-size: 9px; font-weight: 800; color: #333; 
+    letter-spacing: 2px; display: block; margin-bottom: 15px;
 }
 
-.stats-item { font-size: 11px; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; }
-.progress-bar { width: 100%; height: 2px; background: #111; margin-top: 6px; }
-.progress-fill { height: 100%; background: #fff; } /* Біла шкала завантаження */
-
-.history-empty { font-size: 12px; color: #222; font-style: italic; }
-
-/* MAIN CONTENT */
-main { flex: 1; display: flex; flex-direction: column; background: #000; }
-header { height: 60px; border-bottom: 1px solid var(--border); }
-
-#chat-box { flex: 1; overflow-y: auto; padding: 40px 15%; display: flex; flex-direction: column; gap: 40px; }
-
-.msg-group { display: flex; flex-direction: column; gap: 10px; }
-.msg-header { 
-    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; 
-    color: #333; letter-spacing: 2px; 
+/* Ефект терміналу в сайдбарі */
+.terminal-logs {
+    font-family: monospace; font-size: 10px; color: #222;
+    line-height: 1.5; border-left: 1px solid #111; padding-left: 10px;
 }
 
-.message { font-size: 1rem; line-height: 1.6; }
-.ai-msg { color: #888; } /* ШІ відповідає сірим, як описи проектів */
-.user-msg { color: #fff; font-weight: bold; border-left: 1px solid #333; padding-left: 15px; }
+.system-footer { padding: 25px; font-size: 10px; color: #222; border-top: 1px solid var(--border); }
+.pulse-text { color: #555; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-.input-area { padding: 20px 15% 40px 15%; }
+main { flex: 1; display: flex; flex-direction: column; }
+#chat-box { flex: 1; overflow-y: auto; padding: 60px 18%; display: flex; flex-direction: column; gap: 40px; }
+
+.msg-header { font-size: 9px; font-weight: 900; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 5px; }
+.ai-msg { color: #777; font-size: 15px; max-width: 90%; }
+.user-msg { color: #fff; font-weight: 600; border-left: 2px solid #fff; padding-left: 20px; }
+
+.input-area { padding: 40px 18%; }
 .input-container { 
     background: #050505; border: 1px solid #111; 
-    border-radius: 4px; padding: 5px 15px; display: flex; align-items: center; 
+    padding: 5px 10px; display: flex; align-items: center; gap: 10px;
 }
-.input-container:focus-within { border-color: #333; }
 
 input { 
     flex: 1; background: transparent; border: none; color: #fff; 
-    padding: 12px; outline: none; font-size: 16px; 
+    padding: 12px; outline: none; font-family: monospace; font-size: 14px;
 }
-input::placeholder { color: #222; }
 
+/* Нова стрілка відправки */
 button { 
-    background: #fff; border: none; width: 32px; height: 32px; 
-    border-radius: 2px; cursor: pointer; color: #000; font-weight: 900; 
+    background: transparent; border: none; color: #444; 
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; 
 }
+button:hover { color: #fff; transform: translateX(3px); }
 
-.system-footer { 
-    padding: 20px; font-size: 10px; color: #222; 
-    border-top: 1px solid var(--border); text-transform: uppercase; letter-spacing: 1px;
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #111; }
