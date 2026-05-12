@@ -1,7 +1,7 @@
 // Використовуємо sessionStorage для захисту ключа на GitHub
 let GEMINI_KEY = sessionStorage.getItem('AIzaSyBcw-ACv0RnjFnA92U2822gprGV6sEw3U4') || ''; 
 // Раз у тебе працюють тільки нові моделі — ставимо 2.5
-const MODEL_NAME = "gemini-2.5-flash"; 
+const MODEL_NAME = "gemini-3-flash"; 
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('userInput');
