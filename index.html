@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>U-A-CORE | ALPHA 1.0.0</title>
-    <link rel="stylesheet" href="style.css?v=final">
+    <link rel="stylesheet" href="style.css?v=final_alpha">
 </head>
 <body>
 
@@ -38,12 +38,7 @@
     </aside>
 
     <main>
-        <div id="chat-box">
-            <div class="msg-group ai-group">
-                <div class="msg-header">SDU_CORE</div>
-                <div class="message ai-msg">Вітаю. Система U-A-CORE активована в режимі Alpha 1.0.0. Очікую команди.</div>
-            </div>
-        </div>
+        <div id="chat-box"></div>
 
         <div class="input-area">
             <div class="input-container">
@@ -58,6 +53,31 @@
         </div>
     </main>
 </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB12aMvm2OZqapf2bjR-4hkESZeTiblJYg",
+    authDomain: "ai-core-v2.firebaseapp.com",
+    databaseURL: "https://ai-core-v2-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "ai-core-v2",
+    storageBucket: "ai-core-v2.firebasestorage.app",
+    messagingSenderId: "830503834257",
+    appId: "1:830503834257:web:837bd348eb62b297882530",
+    measurementId: "G-MSW2BS4W2D"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Перекидаємо функції в глобальне вікно для script.js
+  window.db = db;
+  window.dbRef = ref;
+  window.dbPush = push;
+  window.dbOnValue = onValue;
+</script>
 
 <script src="script.js"></script>
 </body>
